@@ -36,12 +36,13 @@ def update_item(item_id: int, item: Item):
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
 config = ConnectionConfig(
-    MAIL_USERNAME="your_email@gmail.com",
-    MAIL_PASSWORD="your_app_password",   # مهم
-    MAIL_FROM="your_email@gmail.com",
+    MAIL_USERNAME="am.shiii2003@gmail.com",
+    MAIL_PASSWORD="vhnt gvlt rdru dccy",   # مهم
+    MAIL_FROM="am.shiii2003@gmail.com",
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
-    MAIL_TLS=True
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
 )
 
 @app.post("/send-email")
