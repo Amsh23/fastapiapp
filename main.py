@@ -1,77 +1,71 @@
-from typing import Union
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import Union
+from fastapi import File, UploadFile
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
-# --- APP ---
 app = FastAPI()
 
+# ================================
+#  EMAIL CONFIG
+# ================================
+EMAIL_ADDRESS = os.environ.get("EMAIL_ADDRESS", "youremail@gmail.com")
+EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD", "your_app_password")  # App Password
+TO_EMAIL = os.environ.get("TO_EMAIL", "recipient@example.com")
 
-# --- MODELS ---
+
+# ================================
+#  EMAIL ROUTE
+# ================================
+@app.post("/send-email")
+def send_email(subject: str = "سلام از Python", body: str = "این یک ایمیل تستی ساده است"):
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_ADDRESS
+        msg['To'] = TO_EMAIL
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain'))
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+            server.send_message(msg)
+
+        return {"status": "ایمیل با موفقیت ارسال شد!"}
+    except Exception as e:
+        return {"status": "خطا در ارسال ایمیل", "detail": str(e)}
+
+
+# ================================
+#  OTHER ROUTES
+# ================================
 class Item(BaseModel):
     name: str
     price: float
     is_offer: Union[bool, None] = None
 
-
-# --- ROUTES ---
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
 
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
 
-
 @app.put("/items/{item_id}")
 def update_item(item_id: int, item: Item):
     return {"item_name": item.name, "item_id": item_id}
 
-
 # ================================
-#  EMAIL SYSTEM
-# ================================
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-
-# اطلاعات ایمیل فرستنده و گیرنده
-EMAIL_ADDRESS = 'youremail@gmail.com'
-EMAIL_PASSWORD = 'your_app_password'  # حتما از App Password استفاده کن
-TO_EMAIL = 'recipient@example.com'
-
-# ساخت پیام
-msg = MIMEMultipart()
-msg['From'] = EMAIL_ADDRESS
-msg['To'] = TO_EMAIL
-msg['Subject'] = 'سلام از Python'
-msg.attach(MIMEText('این یک ایمیل تستی ساده است', 'plain'))
-
-# اتصال به سرور SMTP و ارسال ایمیل
-try:
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        server.send_message(msg)
-    print("ایمیل با موفقیت ارسال شد!")
-except Exception as e:
-    print("خطا در ارسال ایمیل:", e)
-
-
-
-# ================================
-#  UPLOAD FILE
+#  FILE UPLOAD
 # ================================
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
-    # فولدر uploads اگر نیست بساز
     if not os.path.exists("uploads"):
         os.makedirs("uploads")
-
     file_path = f"uploads/{file.filename}"
-
     with open(file_path, "wb") as f:
         f.write(await file.read())
-
     return {"file": file.filename, "status": "uploaded"}
