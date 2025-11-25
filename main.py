@@ -33,29 +33,31 @@ def update_item(item_id: int, item: Item):
 # ================================
 #  EMAIL SYSTEM
 # ================================
-from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
-config = ConnectionConfig(
-    MAIL_USERNAME="onrender",
-    MAIL_PASSWORD="onrender",   # مهم
-    MAIL_FROM="onrender",
-    MAIL_PORT=587,
-    MAIL_SERVER="smtp.gmail.com",
-    MAIL_STARTTLS=True,
-    MAIL_SSL_TLS=False,
-)
+# اطلاعات ایمیل فرستنده و گیرنده
+EMAIL_ADDRESS = 'youremail@gmail.com'
+EMAIL_PASSWORD = 'your_app_password'  # حتما از App Password استفاده کن
+TO_EMAIL = 'recipient@example.com'
 
-@app.post("/send-email")
-async def send_email(email: str):
-    msg = MessageSchema(
-        subject="Hello from FastAPI",
-        recipients=[email],
-        body="Test message from API",
-        subtype="plain"
-    )
-    fm = FastMail(config)
-    await fm.send_message(msg)
-    return {"status": "sent"}
+# ساخت پیام
+msg = MIMEMultipart()
+msg['From'] = EMAIL_ADDRESS
+msg['To'] = TO_EMAIL
+msg['Subject'] = 'سلام از Python'
+msg.attach(MIMEText('این یک ایمیل تستی ساده است', 'plain'))
+
+# اتصال به سرور SMTP و ارسال ایمیل
+try:
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+        server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        server.send_message(msg)
+    print("ایمیل با موفقیت ارسال شد!")
+except Exception as e:
+    print("خطا در ارسال ایمیل:", e)
+
 
 
 # ================================
