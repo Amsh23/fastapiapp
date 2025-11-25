@@ -36,9 +36,9 @@ def update_item(item_id: int, item: Item):
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
 config = ConnectionConfig(
-    MAIL_USERNAME="am.shiii2003@gmail.com",
-    MAIL_PASSWORD="vhnt gvlt rdru dccy",   # مهم
-    MAIL_FROM="am.shiii2003@gmail.com",
+    MAIL_USERNAME="onrender",
+    MAIL_PASSWORD="onrender",   # مهم
+    MAIL_FROM="onrender",
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
     MAIL_STARTTLS=True,
