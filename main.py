@@ -3,37 +3,34 @@ from pydantic import BaseModel
 from typing import Union
 from fastapi import File, UploadFile
 import os
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import resend
 
 app = FastAPI()
 
 # ================================
-#  EMAIL CONFIG
+#  RESEND CONFIG
 # ================================
-EMAIL_ADDRESS = os.environ.get("EMAIL_ADDRESS", "youremail@gmail.com")
-EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD", "your_app_password")  # App Password
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY")  # از Render وارد می‌کنی
 TO_EMAIL = os.environ.get("TO_EMAIL", "recipient@example.com")
 
+resend.api_key = RESEND_API_KEY
+
 
 # ================================
-#  EMAIL ROUTE
+#  EMAIL ROUTE (RESEND)
 # ================================
 @app.post("/send-email")
 def send_email(subject: str = "سلام از Python", body: str = "این یک ایمیل تستی ساده است"):
     try:
-        msg = MIMEMultipart()
-        msg['From'] = EMAIL_ADDRESS
-        msg['To'] = TO_EMAIL
-        msg['Subject'] = subject
-        msg.attach(MIMEText(body, 'plain'))
+        response = resend.Emails.send({
+            "from": "Project <onboarding@resend.dev>",  # لازم نیست عوضش کنی
+            "to": TO_EMAIL,
+            "subject": subject,
+            "html": f"<p>{body}</p>",
+        })
 
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.send_message(msg)
+        return {"status": "ایمیل با موفقیت ارسال شد!", "response": response}
 
-        return {"status": "ایمیل با موفقیت ارسال شد!"}
     except Exception as e:
         return {"status": "خطا در ارسال ایمیل", "detail": str(e)}
 
