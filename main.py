@@ -92,8 +92,13 @@ async def save_result(file: UploadFile = File(...)):
 #========================newadded
 @app.get("/files")
 def list_files():
-    files = os.listdir("uploads")
-    return {"files": files}
+    folder = "uploads"
+
+    if not os.path.exists(folder):
+        return {"status": "no folder"}
+
+    return {"files": os.listdir(folder)}
+
 #========================newadded
 @app.get("/results")
 def get_results():
