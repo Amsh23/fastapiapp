@@ -78,7 +78,6 @@ async def upload(file: UploadFile = File(...)):
 #========================newadded
 from fastapi import FastAPI, UploadFile, File
 
-app = FastAPI()
 
 @app.post("/save_result")
 async def save_result(file: UploadFile = File(...)):
