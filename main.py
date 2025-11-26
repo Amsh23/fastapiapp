@@ -76,18 +76,18 @@ async def upload(file: UploadFile = File(...)):
 
 
 #========================newadded
-from pydantic import BaseModel
+from fastapi import FastAPI, UploadFile, File
 
-class GameResult(BaseModel):
-    player: str
-    moves: int
-    time: int
+app = FastAPI()
 
 @app.post("/save_result")
-def save_result(data: GameResult):
-    # اینجا دیتا را ذخیره می‌کنیم (فعلاً در یک فایل JSON)
-    with open("results.txt", "a", encoding="utf-8") as f:
-        f.write(f"{data.player} - Moves: {data.moves} - Time: {data.time}\n")
+async def save_result(file: UploadFile = File(...)):
+    contents = await file.read()
 
-    return {"status": "saved", "data": data}
+    # ذخیره فایل روی سرور
+    with open("uploaded_results.txt", "wb") as f:
+        f.write(contents)
+
+    return {"status": "file received", "filename": file.filename}
+
 #========================newadded
