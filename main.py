@@ -81,13 +81,17 @@ from fastapi import FastAPI, UploadFile, File
 
 @app.post("/save_result")
 async def save_result(file: UploadFile = File(...)):
-    contents = await file.read()
+    if not os.path.exists("uploads"):
+        os.makedirs("uploads")
 
-    # ذخیره فایل روی سرور
-    with open("uploaded_results.txt", "wb") as f:
+    file_path = os.path.join("uploads", file.filename)
+
+    contents = await file.read()
+    with open(file_path, "wb") as f:
         f.write(contents)
 
     return {"status": "file received", "filename": file.filename}
+
 
 #========================newadded
 @app.get("/files")
