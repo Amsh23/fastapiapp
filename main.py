@@ -90,9 +90,10 @@ async def save_result(file: UploadFile = File(...)):
     return {"status": "file received", "filename": file.filename}
 
 #========================newadded
-
-
-
+@app.get("/files")
+def list_files():
+    files = os.listdir("uploads")
+    return {"files": files}
 #========================newadded
 @app.get("/results")
 def get_results():
