@@ -74,7 +74,6 @@ async def upload(file: UploadFile = File(...)):
 
 
 
-
 #========================newadded
 from fastapi import FastAPI, UploadFile, File
 
@@ -114,4 +113,14 @@ def get_results():
 
     return {"status": "ok", "content": content}
 #========================newadded
+from fastapi.responses import FileResponse
+
+@app.get("/download/{filename}")
+def download_file(filename: str):
+    file_path = f"uploads/{filename}"
+
+    if not os.path.exists(file_path):
+        return {"status": "file not found"}
+
+    return FileResponse(path=file_path, filename=filename)
 
