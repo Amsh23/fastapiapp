@@ -91,3 +91,17 @@ async def save_result(file: UploadFile = File(...)):
     return {"status": "file received", "filename": file.filename}
 
 #========================newadded
+
+
+
+#========================newadded
+@app.get("/results")
+def get_results():
+    if not os.path.exists("uploaded_results.txt"):
+        return {"status": "no file found"}
+
+    with open("uploaded_results.txt", "r", encoding="utf-8") as f:
+        content = f.read()
+
+    return {"status": "ok", "content": content}
+#========================newadded
