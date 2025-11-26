@@ -69,3 +69,28 @@ async def upload(file: UploadFile = File(...)):
     with open(file_path, "wb") as f:
         f.write(await file.read())
     return {"file": file.filename, "status": "uploaded"}
+
+
+
+
+
+
+
+
+
+#========================newadded
+from pydantic import BaseModel
+
+class GameResult(BaseModel):
+    player: str
+    moves: int
+    time: int
+
+@app.post("/save_result")
+def save_result(data: GameResult):
+    # اینجا دیتا را ذخیره می‌کنیم (فعلاً در یک فایل JSON)
+    with open("results.txt", "a", encoding="utf-8") as f:
+        f.write(f"{data.player} - Moves: {data.moves} - Time: {data.time}\n")
+
+    return {"status": "saved", "data": data}
+#========================newadded
