@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   meow:
@@ -24,5 +25,13 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Meow
-        run: python meow.py
+      - name: Run Meow Engine and save JSON
+        run: python meow.py > meow.json
+
+      - name: Upload JSON result
+        uses: actions/upload-artifact@v4
+        with:
+          name: meow-result
+          path: meow.json
+          if-no-files-found: error
+          retention-days: 1
