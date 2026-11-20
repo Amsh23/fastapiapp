@@ -9,7 +9,7 @@ CATS = [
     {"mood": "royal", "sound": "Meeeow, human! 👑", "emoji": "👑"},
     {"mood": "hungry", "sound": "Give me fish! 🐟", "emoji": "🐟"},
     {"mood": "chaotic", "sound": "MREOW-WOW! 🙀", "emoji": "🙀"},
-    {"mood": " 사랑", "sound": "Purr purr... 💗", "emoji": "😻"},
+    {"mood": "affectionate", "sound": "Purr purr... 💗", "emoji": "😻"},
 ]
 
 def main():
